@@ -2,10 +2,8 @@
   "name": "react-native-ble-phone-to-phone",
   "version": "0.1.0",
   "description": "test",
-  "main": "lib/commonjs/index",
-  "module": "lib/module/index",
-  "types": "lib/typescript/index.d.ts",
-  "react-native": "src/index",
+  "main": "src/index",
+  "types": "src/index.d.ts",
   "source": "src/index",
   "files": [
     "src",
