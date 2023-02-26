@@ -1,7 +1,7 @@
 {
   "name": "react-native-ble-phone-to-phone",
   "version": "0.1.0",
-  "description": "test",
+  "description": "A very simple Bluetooth advertiser and scanner for React Native.",
   "main": "src/index",
   "types": "src/index.d.ts",
   "source": "src/index",
