@@ -18,7 +18,7 @@ import {
 import {PERMISSIONS, requestMultiple} from "react-native-permissions";
 
 const App = () => {
-  const [list, setList] = useState(['342730d1-9221-4da0-ab8b-bbd7da07ca62']);
+  const [list, setList] = useState([]);
 
   const [uuids] = useState([
     '26f08670-ffdf-40eb-9067-78b9ae6e7919',
