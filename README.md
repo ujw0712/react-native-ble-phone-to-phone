@@ -72,13 +72,13 @@ import {
   scanStart,
   scanStop,
 } from 'react-native-ble-phone-to-phone'
-import { NativeEventEmitter } from 'react-native';
+import { NativeEventEmitter, NativeModules } from 'react-native';
 ```
 
 Register a listener to collect the devices through ReactNative events.
 
 ```js
-const eventEmitter = new NativeEventEmitter(BlePhoneToPhoneEvent);
+const eventEmitter = new NativeEventEmitter(NativeModules.BLEAdvertiser);
 eventEmitter.addListener('foundUuid', (data) => {
   console.log('> data : ', data)   // found uuid
 });

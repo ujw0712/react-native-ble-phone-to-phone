@@ -1,6 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import {
     NativeEventEmitter,
+    NativeModules,
     SafeAreaView,
     ScrollView,
     StyleSheet,
@@ -9,7 +10,6 @@ import {
     View,
 } from 'react-native';
 import {
-    BlePhoneToPhoneEvent,
     advertiseStart,
     advertiseStop,
     scanStart,
@@ -44,7 +44,7 @@ const App = () => {
     permission().then();
 
     // 이벤트 리스터
-    const eventEmitter = new NativeEventEmitter(BlePhoneToPhoneEvent);
+    const eventEmitter = new NativeEventEmitter(NativeModules.BLEAdvertiser);
     // eslint-disable-next-line @typescript-eslint/no-shadow
     eventEmitter.addListener('foundUuid', (data) => {
         console.log('> data : ', data)
