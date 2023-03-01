@@ -24,4 +24,7 @@ export const advertiseStop = NativeBleMobile.advertiseStop;
 export const scanStart = NativeBleMobile.scanStart;
 export const scanStop = NativeBleMobile.scanStop;
 
-export const BlePhoneToPhoneEvent = NativeModules.BLEAdvertiser;
+export const BLEAdvertiser = NativeModules.BLEAdvertiser;
+
+export * from './types';
+
