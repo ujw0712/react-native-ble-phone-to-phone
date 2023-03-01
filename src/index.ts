@@ -27,3 +27,4 @@ export const scanStop = NativeBleMobile.scanStop;
 export const BLEAdvertiser = NativeModules.BLEAdvertiser;
 
 export * from './types';
+

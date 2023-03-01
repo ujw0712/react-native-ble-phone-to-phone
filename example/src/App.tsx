@@ -1,65 +1,64 @@
-import React, { useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import {
-  SafeAreaView,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
+    NativeEventEmitter,
+    SafeAreaView,
+    ScrollView,
+    StyleSheet,
+    Text,
+    TouchableOpacity,
+    View,
 } from 'react-native';
 import {
-  advertiseStart,
-  advertiseStop,
-  scanStart,
-  scanStop,
+    BlePhoneToPhoneEvent,
+    advertiseStart,
+    advertiseStop,
+    scanStart,
+    scanStop,
 } from 'react-native-ble-phone-to-phone';
+import {PERMISSIONS, requestMultiple} from "react-native-permissions";
 
 const App = () => {
   const [list, setList] = useState([]);
-  // const [bluetooth, setBluetooth] = useState();
 
   const [uuids] = useState([
     '26f08670-ffdf-40eb-9067-78b9ae6e7919',
     '342730d1-9221-4da0-ab8b-bbd7da07ca62',
-    '724ef650-20c9-439d-a6bd-ba0bfabd4558',
   ]);
 
-  const [uuid] = useState('c42bb07b-1bf4-459c-953a-ec1d4bddb602');
+  const [uuid] = useState('26f08670-ffdf-40eb-9067-78b9ae6e7919');
 
-  // const peripherals = new Map();
+  useEffect(() => {
+    // 권한
+    const permission = async() => {
+      const result = await requestMultiple([
+        PERMISSIONS.ANDROID.BLUETOOTH_SCAN,
+        PERMISSIONS.ANDROID.BLUETOOTH_CONNECT,
+        PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION,
+        PERMISSIONS.ANDROID.BLUETOOTH_ADVERTISE,
+      ]);
 
-  // useEffect(() => {
-  //   // 권한
-  //   const permission = async () => {
-  //     const result = await requestMultiple([
-  //       PERMISSIONS.ANDROID.BLUETOOTH_SCAN,
-  //       PERMISSIONS.ANDROID.BLUETOOTH_CONNECT,
-  //       PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION,
-  //       PERMISSIONS.ANDROID.BLUETOOTH_ADVERTISE,
-  //     ]);
+      if (result['android.permission.BLUETOOTH_CONNECT']) {
+        console.log('Module initialized');
+      }
+    };
+    permission().then();
 
-  //     if (result['android.permission.BLUETOOTH_CONNECT']) {
-  //       console.log('Module initialized');
-  //     }
-  //   };
-  //   permission().then();
-
-  //   // 이벤트 리스터
-  //   const eventEmitter = new NativeEventEmitter(BLEAdvertiser);
-  //   // eslint-disable-next-line @typescript-eslint/no-shadow
-  //   eventEmitter.addListener('foundUuid', (uuid) => {
-  //     console.log('> data : ', uuid);
-  //     peripherals.set(uuid.deviceAddress, uuid);
-  //     // @ts-ignore
-  //     setList(Array.from(peripherals.values()));
-  //   });
-  //   eventEmitter.addListener('error', (message) =>
-  //     console.log('> error : ', message)
-  //   );
-  //   eventEmitter.addListener('log', (message) =>
-  //     console.log('> log : ', message)
-  //   );
-  // }, []);
+    // 이벤트 리스터
+    const eventEmitter = new NativeEventEmitter(BlePhoneToPhoneEvent);
+    // eslint-disable-next-line @typescript-eslint/no-shadow
+    eventEmitter.addListener('foundUuid', (data) => {
+        console.log('> data : ', data)
+        const newList = new Set([...list,data.uuid]);
+        // @ts-ignore
+      setList([...newList]);
+    });
+    eventEmitter.addListener('error', (message) =>
+      console.log('> error : ', message)
+    );
+    eventEmitter.addListener('log', (message) =>
+      console.log('> log : ', message)
+    );
+  }, []);
 
   const onAdvertiseStart = () => {
     advertiseStart(uuid);
@@ -74,7 +73,7 @@ const App = () => {
 
     setTimeout(() => {
       onScanStop();
-    }, 10000);
+    }, 15000);
   };
 
   const onScanStop = () => {
