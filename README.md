@@ -49,11 +49,14 @@ import {
 } from 'react-native-ble-phone-to-phone';
 ```
 
-Define uuid to start advertise
+Define uuid to start advertise.
+or Start advertise without uuid.
 
 ```js
 const uuid = '26f08670-ffdf-40eb-9067-78b9ae6e7919';
 advertiseStart(uuid);
+
+advertiseStart();
 ```
 
 Stop advertising
@@ -80,13 +83,16 @@ Register a listener to collect the devices through ReactNative events.
 ```js
 const eventEmitter = new NativeEventEmitter(NativeModules.BLEAdvertiser);
 eventEmitter.addListener('foundUuid', (data) => {
-  console.log('> data : ', data)   // found uuid
+  console.log('> foundUuid data : ', data)   // found uuid
 });
+eventEmitter.addListener('foundDevice', (data) =>
+  console.log('> foundDevice data : ', data) // found device
+);
 eventEmitter.addListener('error', (error) =>
-  console.log('> error : ', error) // error message
+  console.log('> error : ', error)           // error message
 );
 eventEmitter.addListener('log', (log) =>
-  console.log('> log : ', log)     // log message
+  console.log('> log : ', log)               // log message
 );
 ```
 
@@ -98,6 +104,12 @@ const uuids = [
   '342730d1-9221-4da0-ab8b-bbd7da07ca62',
 ];
 scanStart(uuids.join());  
+```
+
+If you need to scan all the nearby devices, Start scanning without uuid array
+
+```js
+scanStart();  
 ```
 
 Stop scanning

@@ -52,16 +52,20 @@ const App = () => {
         // @ts-ignore
       setList([...newList]);
     });
-    eventEmitter.addListener('error', (message) =>
-      console.log('> error : ', message)
-    );
-    eventEmitter.addListener('log', (message) =>
-      console.log('> log : ', message)
-    );
+      eventEmitter.addListener('foundDevice', (data) =>
+          console.log('> foundDevice data : ', data)
+      );
+      eventEmitter.addListener('error', (message) =>
+          console.log('> error : ', message)
+      );
+      eventEmitter.addListener('log', (message) =>
+          console.log('> log : ', message)
+      );
   }, []);
 
   const onAdvertiseStart = () => {
-    advertiseStart(uuid);
+    // advertiseStart(uuid);
+      advertiseStart();
   };
 
   const onAdvertiseStop = () => {
@@ -69,7 +73,8 @@ const App = () => {
   };
 
   const onScanStart = () => {
-    scanStart(uuids.join());
+    // scanStart(uuids.join());
+      scanStart();
 
     setTimeout(() => {
       onScanStop();

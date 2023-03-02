@@ -36,6 +36,8 @@ import java.util.UUID;
 public class BlePhoneToPhoneModule extends ReactContextBaseJavaModule {
     public static final String NAME = "BlePhoneToPhone";
 
+    public final String DEFAULT_UUID = "26f08670-ffdf-40eb-9067-78b9ae6e7919";
+
     //Constructor
     public BlePhoneToPhoneModule(ReactApplicationContext reactContext) {
         super(reactContext);
@@ -81,6 +83,11 @@ public class BlePhoneToPhoneModule extends ReactContextBaseJavaModule {
     @SuppressLint("MissingPermission")
     @ReactMethod
     public void onAdvertiseStart(String uuid) {
+
+        if (uuid == null) {
+            uuid = DEFAULT_UUID;
+        }
+
         BluetoothLeAdvertiser tempAdvertiser;
         AdvertiseCallback tempCallback;
 
@@ -186,11 +193,14 @@ public class BlePhoneToPhoneModule extends ReactContextBaseJavaModule {
 
         List<ScanFilter> filters = new ArrayList<>();
 
-        List<String> uuidList = Arrays.asList(uuids.split(","));
-        for (String uuid : uuidList) {
-            filters.add(new ScanFilter.Builder().setServiceUuid(ParcelUuid.fromString(uuid)).build());
+        if (uuids != null) {
+            List<String> uuidList = Arrays.asList(uuids.split(","));
+            for (String uuid : uuidList) {
+                filters.add(new ScanFilter.Builder().setServiceUuid(ParcelUuid.fromString(uuid)).build());
+            }
+        } else {
+            filters = null;
         }
-
         mScanner.startScan(filters, scanSettings, mScannerCallback);
 
         WritableMap params = Arguments.createMap();
@@ -312,6 +322,7 @@ public class BlePhoneToPhoneModule extends ReactContextBaseJavaModule {
     private class SimpleScanCallback extends ScanCallback {
         @Override
         public void onScanResult(int callbackType, ScanResult result) {
+            WritableMap deviceParams = Arguments.createMap();
             WritableMap params = Arguments.createMap();
             WritableArray paramsUUID = Arguments.createArray();
 
@@ -319,13 +330,28 @@ public class BlePhoneToPhoneModule extends ReactContextBaseJavaModule {
                 for (ParcelUuid uuid : result.getScanRecord().getServiceUuids()) {
                     paramsUUID.pushString(uuid.toString());
                 }
+
+                String uuid = paramsUUID.getString(0);
+                if (uuid.length() > 0) {
+                    params.putString("uuid", uuid);
+                    sendEvent("foundUuid", params);
+                }
             }
 
-            String uuid = paramsUUID.getString(0);
-            if (uuid.length() > 0) {
-                params.putString("uuid", uuid);
-                sendEvent("foundUuid", params);
+            deviceParams.putArray("uuids", paramsUUID);
+            deviceParams.putInt("rssi", result.getRssi());
+
+            if (result.getScanRecord() != null) {
+                deviceParams.putInt("txPower", result.getScanRecord().getTxPowerLevel());
+                deviceParams.putString("deviceName", result.getScanRecord().getDeviceName());
+                deviceParams.putInt("advFlags", result.getScanRecord().getAdvertiseFlags());
             }
+
+            if (result.getDevice() != null) {
+                deviceParams.putString("deviceAddress", result.getDevice().getAddress());
+            }
+
+            sendEvent("foundDevice", deviceParams);
         }
 
         @Override

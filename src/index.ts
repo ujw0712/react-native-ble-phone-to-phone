@@ -5,13 +5,13 @@ import { NativeModules } from 'react-native';
 const { BlePhoneToPhone } = NativeModules;
 
 const NativeBleMobile: BleMobileInterface = {
-  advertiseStart(uuid: string) {
+  advertiseStart(uuid?: string) {
     return BlePhoneToPhone.onAdvertiseStart(uuid);
   },
   advertiseStop() {
     return BlePhoneToPhone.onAdvertiseStop();
   },
-  scanStart(uuids: string) {
+  scanStart(uuids?: string) {
     return BlePhoneToPhone.onScanStart(uuids);
   },
   scanStop() {
