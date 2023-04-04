@@ -1,35 +1,35 @@
-import React, {useEffect, useState} from 'react';
 import {
-    NativeEventEmitter,
-    NativeModules,
-    SafeAreaView,
-    ScrollView,
-    StyleSheet,
-    Text,
-    TouchableOpacity,
-    View,
+  NativeEventEmitter,
+  NativeModules,
+  SafeAreaView,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
 } from 'react-native';
+import { PERMISSIONS, requestMultiple } from 'react-native-permissions';
+import React, { useEffect, useState } from 'react';
 import {
-    advertiseStart,
-    advertiseStop,
-    scanStart,
-    scanStop,
+  advertiseStart,
+  advertiseStop,
+  scanStart,
+  scanStop,
 } from 'react-native-ble-phone-to-phone';
-import {PERMISSIONS, requestMultiple} from "react-native-permissions";
 
 const App = () => {
   const [list, setList] = useState([]);
 
-  const [uuids] = useState([
-    '26f08670-ffdf-40eb-9067-78b9ae6e7919',
-    '342730d1-9221-4da0-ab8b-bbd7da07ca62',
-  ]);
+  // const [uuids] = useState([
+  //   '26f08670-ffdf-40eb-9067-78b9ae6e7919',
+  //   '342730d1-9221-4da0-ab8b-bbd7da07ca62',
+  // ]);
 
-  const [uuid] = useState('26f08670-ffdf-40eb-9067-78b9ae6e7919');
+  // const [uuid] = useState('26f08670-ffdf-40eb-9067-78b9ae6e7919');
 
   useEffect(() => {
     // 권한
-    const permission = async() => {
+    const permission = async () => {
       const result = await requestMultiple([
         PERMISSIONS.ANDROID.BLUETOOTH_SCAN,
         PERMISSIONS.ANDROID.BLUETOOTH_CONNECT,
@@ -45,27 +45,27 @@ const App = () => {
 
     // 이벤트 리스터
     const eventEmitter = new NativeEventEmitter(NativeModules.BLEAdvertiser);
-    // eslint-disable-next-line @typescript-eslint/no-shadow
+
     eventEmitter.addListener('foundUuid', (data) => {
-        console.log('> data : ', data)
-        const newList = new Set([...list,data.uuid]);
-        // @ts-ignore
+      console.log('> data : ', data);
+      const newList = new Set([...list, data.uuid]);
+      // @ts-ignore
       setList([...newList]);
     });
-      eventEmitter.addListener('foundDevice', (data) =>
-          console.log('> foundDevice data : ', data)
-      );
-      eventEmitter.addListener('error', (message) =>
-          console.log('> error : ', message)
-      );
-      eventEmitter.addListener('log', (message) =>
-          console.log('> log : ', message)
-      );
-  }, []);
+    eventEmitter.addListener('foundDevice', (data) =>
+      console.log('> foundDevice data : ', data)
+    );
+    eventEmitter.addListener('error', (message) =>
+      console.log('> error : ', message)
+    );
+    eventEmitter.addListener('log', (message) =>
+      console.log('> log : ', message)
+    );
+  }, [list]);
 
   const onAdvertiseStart = () => {
     // advertiseStart(uuid);
-      advertiseStart();
+    advertiseStart();
   };
 
   const onAdvertiseStop = () => {
@@ -74,7 +74,7 @@ const App = () => {
 
   const onScanStart = () => {
     // scanStart(uuids.join());
-      scanStart();
+    scanStart();
 
     setTimeout(() => {
       onScanStop();
