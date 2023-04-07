@@ -25,4 +25,3 @@ export const scanStart = NativeBleMobile.scanStart;
 export const scanStop = NativeBleMobile.scanStop;
 
 export * from './types';
-

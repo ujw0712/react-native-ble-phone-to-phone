@@ -9,4 +9,3 @@ export declare type BleMobileInterface = {
   scanStart(uuids?: string): Promise<void>;
   scanStop(): Promise<void>;
 };
-
